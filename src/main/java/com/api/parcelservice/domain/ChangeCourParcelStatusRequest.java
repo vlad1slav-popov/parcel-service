@@ -8,12 +8,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class ChangeParcelStatusRequest {
-
+public class ChangeCourParcelStatusRequest {
 
     @NotNull
     private Long id;
 
+    @NotNull
+    @JsonProperty("courier_id")
+    private Long courierId;
+
     @NotBlank
     private Status status;
+
 }

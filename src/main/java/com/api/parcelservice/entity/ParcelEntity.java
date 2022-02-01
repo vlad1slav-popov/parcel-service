@@ -13,28 +13,31 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table
+@Table(name = "parcels")
 public class ParcelEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonProperty("order_id")
-    private String orderId;
     private BigDecimal amount;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
     @JsonProperty("user_id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Column(name = "user_id")
     private Long userId;
     @JsonProperty("courier_id")
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Column(name = "courier_id")
     private Long courierId;
     @JsonProperty("coordinates_from")
+    @Column(name = "coordinates_from")
     private String coordinatesFrom;
     @JsonProperty("coordinates_to")
+    @Column(name = "coordinates_to")
     private String coordinatesTo;
+    @Enumerated(EnumType.STRING)
     private Status status;
 
 

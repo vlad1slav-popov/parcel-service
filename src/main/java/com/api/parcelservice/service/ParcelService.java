@@ -1,8 +1,6 @@
 package com.api.parcelservice.service;
 
-import com.api.parcelservice.domain.AddParcelRequest;
-import com.api.parcelservice.domain.ChangeParcelStatusRequest;
-import com.api.parcelservice.domain.UpdDestinationRequest;
+import com.api.parcelservice.domain.*;
 import com.api.parcelservice.entity.ParcelEntity;
 import com.api.parcelservice.entity.Status;
 import com.api.parcelservice.exception.ParcelException;
@@ -10,7 +8,6 @@ import com.api.parcelservice.repository.ParcelRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,12 +24,6 @@ public class ParcelService {
 
 
     public ResponseEntity<ParcelEntity> createParcel(AddParcelRequest request)  {
-
-        ParcelEntity parcelInfo = parcelRepository.getParcelEntityByOrderId(request.getOrderId());
-
-        if (Objects.nonNull(parcelInfo)) {
-            throw new ParcelException("ORDER_ALREADY_EXISTS", "001");
-        }
 
         ParcelEntity parcelEntity = new ParcelEntity();
         BeanUtils.copyProperties(request, parcelEntity);
@@ -52,7 +43,7 @@ public class ParcelService {
     public ResponseEntity<ParcelEntity> updateParcelDestOfUser(UpdDestinationRequest request) {
 
         ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
-                        .getParcelEntityByOrderIdAndUserId(request.getOrderId(),
+                        .getParcelEntityByIdAndUserId(request.getId(),
                                 request.getUserId()))
                 .orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
 
@@ -70,11 +61,10 @@ public class ParcelService {
 
     }
 
-    public ResponseEntity<ParcelEntity> cancelParcel(Long parcelId,
-                                                     Long userId) {
+    public ResponseEntity<ParcelEntity> cancelParcel(CancelRequest request) {
         ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
-                .getParcelEntityByIdAndUserId(parcelId,
-                        userId)).orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
+                .getParcelEntityByIdAndUserId(request.getId(),
+                        request.getUserId())).orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
 
         parcelInfo.setStatus(Status.CANCEL);
         parcelRepository.save(parcelInfo);
@@ -102,7 +92,7 @@ public class ParcelService {
 
     public ResponseEntity<ParcelEntity> changeParcelStatus(ChangeParcelStatusRequest request) {
         ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
-                        .getParcelEntityByOrderId(request.getOrderId()))
+                        .getParcelEntityById(request.getId()))
                 .orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
 
         parcelInfo.setStatus(request.getStatus());
@@ -112,14 +102,13 @@ public class ParcelService {
         return ResponseEntity.ok(parcelInfo);
     }
 
-    public ResponseEntity<ParcelEntity> assingToCour(Long parcelId,
-                                                     Long courId) {
+    public ResponseEntity<ParcelEntity> assingToCour(AssignToCourRequest request) {
         ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
-                        .getParcelEntityById(parcelId))
+                        .getParcelEntityById(request.getId()))
                 .orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
 
 
-        parcelInfo.setCourierId(courId);
+        parcelInfo.setCourierId(request.getCourierId());
         parcelInfo.setStatus(Status.ACCEPTED);
 
         return ResponseEntity.ok(parcelInfo);
@@ -131,17 +120,14 @@ public class ParcelService {
     }
 
 
-    public ResponseEntity<ParcelEntity> changeParcelStatusOfCour(ChangeParcelStatusRequest request,
-                                                                 Long courId) {
+    public ResponseEntity<ParcelEntity> changeParcelStatusOfCour(ChangeCourParcelStatusRequest request) {
         ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
-                        .getParcelEntityByOrderIdAndCourierId(request.getOrderId(),
-                                courId))
+                        .getParcelEntityByIdAndCourierId(request.getId(),
+                                request.getCourierId()))
                 .orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
-
         parcelInfo.setStatus(request.getStatus());
 
         parcelRepository.save(parcelInfo);
-
         return ResponseEntity.ok(parcelInfo);
     }
 

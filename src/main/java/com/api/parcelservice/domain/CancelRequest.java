@@ -6,17 +6,11 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class UpdDestinationRequest {
-
+public class CancelRequest {
 
     @NotNull
     private Long id;
     @NotNull
     @JsonProperty("user_id")
     private Long userId;
-
-    @JsonProperty("coordinates_from")
-    private String coordinatesFrom;
-    @JsonProperty("coordinates_to")
-    private String coordinatesTo;
 }

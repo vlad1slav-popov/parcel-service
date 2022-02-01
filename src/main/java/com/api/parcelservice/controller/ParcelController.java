@@ -1,8 +1,6 @@
 package com.api.parcelservice.controller;
 
-import com.api.parcelservice.domain.AddParcelRequest;
-import com.api.parcelservice.domain.ChangeParcelStatusRequest;
-import com.api.parcelservice.domain.UpdDestinationRequest;
+import com.api.parcelservice.domain.*;
 import com.api.parcelservice.entity.ParcelEntity;
 import com.api.parcelservice.service.ParcelService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
@@ -30,15 +29,14 @@ public class ParcelController {
         return parcelService.updateParcelDestOfUser(request);
     }
 
-    @PutMapping("cancel/{id}?user_id={userId}")
-    public ResponseEntity<ParcelEntity> cancelParcel(@PathVariable Long id,
-                                                     @PathVariable Long userId) {
-        return parcelService.cancelParcel(id, userId);
+    @PutMapping("cancel")
+    public ResponseEntity<ParcelEntity> cancelParcel(@RequestBody @Valid CancelRequest request) {
+        return parcelService.cancelParcel(request);
     }
 
-    @GetMapping("{id}?user_id={userId}")
+    @GetMapping("/user/{id}")
     public ResponseEntity<ParcelEntity> getParcelOfUser(@PathVariable Long id,
-                                                        @PathVariable Long userId) {
+                                                        @RequestParam(name = "user_id") Long userId) {
         return parcelService.getParcelOfUser(id, userId);
     }
 
@@ -57,26 +55,24 @@ public class ParcelController {
         return parcelService.changeParcelStatus(request);
     }
 
-    @PutMapping("assign/{id}?courier_id={courierId}")
-    public ResponseEntity<ParcelEntity> assignToCourier(@PathVariable Long id,
-                                                        @PathVariable Long courierId) {
-        return parcelService.assingToCour(id, courierId);
+    @PutMapping("courier/assign")
+    public ResponseEntity<ParcelEntity> assignToCourier(@RequestBody @Valid AssignToCourRequest request) {
+        return parcelService.assingToCour(request);
     }
 
-    @GetMapping("all?courier_id={courierId}")
-    public ResponseEntity<List<ParcelEntity>> getAllByCourier(@PathVariable Long courierId) {
+    @GetMapping("courier/all")
+    public ResponseEntity<List<ParcelEntity>> getAllByCourier( @RequestParam(name = "courier_id") Long courierId) {
         return parcelService.getAllAssignToCour(courierId);
     }
 
-    @PutMapping("status/change?courier_id={courierId}")
-    public ResponseEntity<ParcelEntity> changeParcelStatusOfCourier(@RequestBody @Valid ChangeParcelStatusRequest request,
-                                                                    @PathVariable Long courierId) {
-        return parcelService.changeParcelStatusOfCour(request, courierId);
+    @PutMapping("courier/status/change")
+    public ResponseEntity<ParcelEntity> changeParcelStatusOfCourier(@RequestBody @Valid ChangeCourParcelStatusRequest request) {
+        return parcelService.changeParcelStatusOfCour(request);
     }
 
-    @GetMapping("{id}?courier_id={courierId}")
+    @GetMapping("courier/{id}")
     public ResponseEntity<ParcelEntity> getParcelOfCourier(@PathVariable Long id,
-                                                           @PathVariable Long courierId) {
+                                                           @RequestParam(name = "courier_id") Long courierId) {
         return parcelService.getParcelInfoOfCour(id, courierId);
     }
 

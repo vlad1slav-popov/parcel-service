@@ -14,16 +14,9 @@ public interface ParcelRepository extends JpaRepository<ParcelEntity, Long> {
     ParcelEntity getParcelEntityByIdAndCourierId(Long id,
                                                  Long courierId);
 
-    ParcelEntity getParcelEntityByOrderId(String orderId);
-
-    ParcelEntity getParcelEntityByOrderIdAndUserId(String orderId,
-                                                   Long userId);
-
     ParcelEntity getParcelEntityByIdAndUserId(Long id,
                                               Long userId);
 
-    ParcelEntity getParcelEntityByOrderIdAndCourierId(String orderId,
-                                                      Long id);
 
     List<ParcelEntity> getAllByUserId(Long userId);
 

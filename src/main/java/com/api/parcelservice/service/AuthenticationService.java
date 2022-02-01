@@ -54,10 +54,10 @@ public class AuthenticationService {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,
                     requestDto.getPassword()));
 
-            String token = jwtTokenProvider.createToken(username, user.getRoles());
+//            String token = jwtTokenProvider.createToken(username, user.getRoles());
 
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.set("Authorization", "Bearer_" + token);
+//            httpHeaders.set("Authorization", "Bearer_" + token);
 
             UserLoginResponse userLoginResponse = UserLoginResponse.builder()
                     .username(username)

@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "user_table", schema = "monitor")
+@Table(name = "user_table")
 @ToString
 public class UserLoginEntity extends BaseEntity {
 

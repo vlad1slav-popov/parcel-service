@@ -26,40 +26,32 @@ public class ParcelExceptionHandler extends ResponseEntityExceptionHandler {
                         .build());
     }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  @Nonnull HttpHeaders headers,
-                                                                  @Nonnull HttpStatus status,
-                                                                  @Nonnull WebRequest request) {
-
-//        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-
-//        logger.error("Validation error.");
-//        for (FieldError error : fieldErrors) {
-//            logger.error("{} ({}) : {}", error.getField(), error.getRejectedValue(), error.getDefaultMessage());
-//        }
-
-        return ResponseEntity.ok()
-                .body(
-                        ErrorResponse.builder()
-                                .code(String.valueOf(status.value()))
-                                .description(ex.getBindingResult().getFieldError().getField())
-                                .build());
-
-    }
-
 //    @Override
-//    protected ResponseEntity<Object> handleHttpMessageNotReadable(
-//            HttpMessageNotReadableException ex, HttpHeaders headers,
-//            HttpStatus status, WebRequest request) {
-//        // paste custom hadling here
-////        logger.info(ex.getMessage());
+//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+//                                                                  @Nonnull HttpHeaders headers,
+//                                                                  @Nonnull HttpStatus status,
+//                                                                  @Nonnull WebRequest request) {
 //
-//        return ResponseEntity.status(status)
-//                .body(ErrorResponse.builder()
-//                        .code(String.valueOf(status.value()))
-//                        .description(ex)
-//                        .build())
-//                ;
+//        return ResponseEntity.ok()
+//                .body(
+//                        ErrorResponse.builder()
+//                                .code(String.valueOf(status.value()))
+//                                .description(ex.getBindingResult().getFieldError().getField() + " " +
+//                                        ex.getBindingResult().getFieldError().getDefaultMessage())
+//                                .build());
+//
 //    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex, HttpHeaders headers,
+            HttpStatus status, WebRequest request) {
+
+        return ResponseEntity.status(status)
+                .body(ErrorResponse.builder()
+                        .code(String.valueOf(status.value()))
+                        .description(ex.getMessage())
+                        .build())
+                ;
+    }
 }

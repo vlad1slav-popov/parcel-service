@@ -11,7 +11,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@Table(name = "roles", schema = "monitor")
+@Table(name = "roles")
 public class RoleEntity extends BaseEntity {
 
     @Id

@@ -1,6 +1,5 @@
 package com.api.parcelservice.domain;
 
-import com.api.parcelservice.entity.Status;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -10,10 +9,6 @@ import java.math.BigDecimal;
 
 @Data
 public class AddParcelRequest {
-
-    @NotNull
-    @JsonProperty("order_id")
-    private String orderId;
 
     @NotNull
     private BigDecimal amount;

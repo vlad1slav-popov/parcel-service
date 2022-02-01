@@ -33,10 +33,6 @@ public class AuthenticationController {
         return authenticationService.getLoginResponse(requestDto);
     }
 
-//    @PostMapping("/changepassword")
-//    public ResponseEntity<ChangePasswordResponse> changePassword(@RequestBody ChangePasswordRequest request) {
-//        return userAuthorizationService.getChangePasswordResponse(request);
-//    }
 
     @PostMapping("/register")
     public ResponseEntity<RegisterUserResponse> register(@RequestBody RegisterUserRequest request) {

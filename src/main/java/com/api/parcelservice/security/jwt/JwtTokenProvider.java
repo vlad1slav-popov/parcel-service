@@ -2,7 +2,9 @@ package com.api.parcelservice.security.jwt;
 
 
 
+import com.api.parcelservice.dto.OnUserLogoutSuccessEvent;
 import com.api.parcelservice.entity.RoleEntity;
+import com.api.parcelservice.exception.JwtAuthenticationException;
 import com.api.parcelservice.security.JwtUserDetailsService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +33,13 @@ public class JwtTokenProvider {
 
 
     private final JwtUserDetailsService userDetailsService;
+    private final LoggedOutJwtTokenCache loggedOutJwtTokenCache;
 
-    public JwtTokenProvider(JwtUserDetailsService userDetailsService) {
+
+    public JwtTokenProvider(LoggedOutJwtTokenCache loggedOutJwtTokenCache,
+                            JwtUserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
+        this.loggedOutJwtTokenCache = loggedOutJwtTokenCache;
     }
 
 
@@ -42,21 +48,21 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-    public String createToken(String username, List<RoleEntity> roleEntities) {
-
-        Claims claims = Jwts.claims().setSubject(username);
-        claims.put("roles", getRoleNames(roleEntities));
-
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + validInMilliSeconds);
-
-        return Jwts.builder()//
-                .setClaims(claims)//
-                .setIssuedAt(now)//
-                .setExpiration(validity)//
-                .signWith(SignatureAlgorithm.HS256, secret)//
-                .compact();
-    }
+//    public String createToken(String username, List<RoleEntity> roleEntities) {
+//
+//        Claims claims = Jwts.claims().setSubject(username);
+//        claims.put("roles", getRoleNames(roleEntities));
+//
+//        Date now = new Date();
+//        Date validity = new Date(now.getTime() + validInMilliSeconds);
+//
+//        return Jwts.builder()//
+//                .setClaims(claims)//
+//                .setIssuedAt(now)//
+//                .setExpiration(validity)//
+//                .signWith(SignatureAlgorithm.HS256, secret)//
+//                .compact();
+//    }
 
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(
@@ -67,8 +73,9 @@ public class JwtTokenProvider {
     }
 
     public String getUsername(String token) {
-        return Jwts.parser()
+        return Jwts.parserBuilder()
                 .setSigningKey(secret)
+                .build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -85,19 +92,36 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser()
+
+            Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(secret)
+                    .build()
                     .parseClaimsJws(token);
 
             if (claims.getBody().getExpiration().before(new Date())) {
                 return false;
             }
-
+            validateTokenIsNotForALoggedOutDevice(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.info("Invalid token");
+        } catch (JwtException | IllegalArgumentException | JwtAuthenticationException exception) {
+//            logger.error(exception.getMessage());
+            exception.getMessage();
         }
         return false;
+    }
+
+    private void validateTokenIsNotForALoggedOutDevice(String authToken) {
+        OnUserLogoutSuccessEvent previouslyLoggedOutEvent = loggedOutJwtTokenCache
+                .getLogoutEventForToken(authToken);
+        if (previouslyLoggedOutEvent != null) {
+            String userEmail = previouslyLoggedOutEvent.getUserName();
+            Date logoutEventDate = previouslyLoggedOutEvent.getEventTime();
+            String errorMessage = String.format("Token corresponds to an already " +
+                            "logged out user " +
+                            "[%s] at [%s]. Please login again",
+                    userEmail, logoutEventDate);
+            throw new JwtAuthenticationException(errorMessage);
+        }
     }
 
     private List<String> getRoleNames(List<RoleEntity> userRoleEntities) {
