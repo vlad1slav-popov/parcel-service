@@ -40,8 +40,8 @@ public class ParcelController {
         return parcelService.getParcelOfUser(id, userId);
     }
 
-    @GetMapping("all?user_id={userId}")
-    public ResponseEntity<List<ParcelEntity>> getAllByUser(@PathVariable Long userId) {
+    @GetMapping("/user/all")
+    public ResponseEntity<List<ParcelEntity>> getAllByUser(@RequestParam(name = "user_id") Long userId) {
         return parcelService.getAllByUserId(userId);
     }
 
