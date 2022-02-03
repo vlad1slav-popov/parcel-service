@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
 
-    private static final String LOGIN_ENDPOINT = "/auth/**";
+//    private static final String LOGIN_ENDPOINT = "/auth/**";
 
 
 
@@ -50,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
+//                .antMatchers(LOGIN_ENDPOINT).permitAll()
                 //.antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
-//                .anyRequest().authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider))
                 .and()

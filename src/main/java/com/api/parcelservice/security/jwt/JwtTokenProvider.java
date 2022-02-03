@@ -1,9 +1,10 @@
 package com.api.parcelservice.security.jwt;
 
 
-
 import com.api.parcelservice.dto.OnUserLogoutSuccessEvent;
 import com.api.parcelservice.entity.RoleEntity;
+import com.api.parcelservice.entity.Status;
+import com.api.parcelservice.entity.UserLoginEntity;
 import com.api.parcelservice.exception.JwtAuthenticationException;
 import com.api.parcelservice.security.JwtUserDetailsService;
 import io.jsonwebtoken.*;
@@ -48,25 +49,16 @@ public class JwtTokenProvider {
         secret = Base64.getEncoder().encodeToString(secret.getBytes());
     }
 
-//    public String createToken(String username, List<RoleEntity> roleEntities) {
-//
-//        Claims claims = Jwts.claims().setSubject(username);
-//        claims.put("roles", getRoleNames(roleEntities));
-//
-//        Date now = new Date();
-//        Date validity = new Date(now.getTime() + validInMilliSeconds);
-//
-//        return Jwts.builder()//
-//                .setClaims(claims)//
-//                .setIssuedAt(now)//
-//                .setExpiration(validity)//
-//                .signWith(SignatureAlgorithm.HS256, secret)//
-//                .compact();
-//    }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = this.userDetailsService.loadUserByUsername(
-                getUsername(token));
+
+        UserDetails userDetails = this.userDetailsService.loadUserByUserEntity(
+                this.buildEntityForJwt(token)
+        );
+
+
+//        UserDetails userDetails = this.userDetailsService.loadUserByUsername(
+//                getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails,
                 "",
                 userDetails.getAuthorities());
@@ -80,6 +72,49 @@ public class JwtTokenProvider {
                 .getBody()
                 .getSubject();
     }
+
+    //-------------------------------------------------------------------------------------
+
+    public String getPassword(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("password", String.class);
+    }
+
+    public Long getId(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", Long.class);
+    }
+
+    public String getStatus(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("status", String.class);
+    }
+
+
+    public UserLoginEntity buildEntityForJwt(String token) {
+        return UserLoginEntity.builder()
+                .id(getId(token))
+                .username(getUsername(token))
+                .password(getPassword(token))
+                .status(Status.valueOf(getStatus(token)))
+                .build();
+    }
+
+
+    //--------------------------------------------------------------------------------------
+
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
@@ -104,8 +139,7 @@ public class JwtTokenProvider {
             validateTokenIsNotForALoggedOutDevice(token);
             return true;
         } catch (JwtException | IllegalArgumentException | JwtAuthenticationException exception) {
-//            logger.error(exception.getMessage());
-            exception.getMessage();
+            exception.printStackTrace();
         }
         return false;
     }

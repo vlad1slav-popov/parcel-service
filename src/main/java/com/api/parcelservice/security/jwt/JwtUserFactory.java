@@ -21,12 +21,16 @@ public final class JwtUserFactory {
 
     public static JwtUser create(UserLoginEntity userLoginEntity) {
 
+
+        List<SimpleGrantedAuthority> roles = new ArrayList<>();
+        SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_USER");
+        roles.add(role);
+
         return JwtUser.builder()
                 .id(userLoginEntity.getId())
                 .username(userLoginEntity.getUsername())
                 .password(userLoginEntity.getPassword())
-                .authorities(getGrantedAuthorityList(new ArrayList<>(userLoginEntity
-                        .getRoles())))
+                .authorities(roles)
                 .enabled(userLoginEntity.getStatus().equals(Status.ACTIVE))
                 .build();
     }
