@@ -1,9 +1,8 @@
 package com.api.parcelservice.security.jwt;
 
 
-import com.api.parcelservice.entity.RoleEntity;
+import com.api.parcelservice.dto.LoginDTO;
 import com.api.parcelservice.entity.Status;
-import com.api.parcelservice.entity.UserLoginEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,11 +18,11 @@ public final class JwtUserFactory {
     public JwtUserFactory() {
     }
 
-    public static JwtUser create(UserLoginEntity userLoginEntity) {
+    public static JwtUser create(LoginDTO userLoginEntity) {
 
 
         List<SimpleGrantedAuthority> roles = new ArrayList<>();
-        SimpleGrantedAuthority role = new SimpleGrantedAuthority("ROLE_USER");
+        SimpleGrantedAuthority role = new SimpleGrantedAuthority(userLoginEntity.getRoles().get(0));
         roles.add(role);
 
         return JwtUser.builder()
@@ -35,14 +34,14 @@ public final class JwtUserFactory {
                 .build();
     }
 
-    private static List<GrantedAuthority> getGrantedAuthorityList(List<RoleEntity> userRoleEntities) {
-
-        log.info("get granted authority list: " + userRoleEntities.get(0).getName());
-
-        return userRoleEntities.stream()
-                .map(role ->
-                        new SimpleGrantedAuthority(role.getName())
-                ).collect(Collectors.toList());
-    }
+//    private static List<GrantedAuthority> getGrantedAuthorityList(List<RoleEntity> userRoleEntities) {
+//
+//        log.info("get granted authority list: " + userRoleEntities.get(0).getName());
+//
+//        return userRoleEntities.stream()
+//                .map(role ->
+//                        new SimpleGrantedAuthority(role.getName())
+//                ).collect(Collectors.toList());
+//    }
 
 }

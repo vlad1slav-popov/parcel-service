@@ -1,10 +1,9 @@
 package com.api.parcelservice.security.jwt;
 
 
+import com.api.parcelservice.dto.LoginDTO;
 import com.api.parcelservice.dto.OnUserLogoutSuccessEvent;
-import com.api.parcelservice.entity.RoleEntity;
 import com.api.parcelservice.entity.Status;
-import com.api.parcelservice.entity.UserLoginEntity;
 import com.api.parcelservice.exception.JwtAuthenticationException;
 import com.api.parcelservice.security.JwtUserDetailsService;
 import io.jsonwebtoken.*;
@@ -56,13 +55,12 @@ public class JwtTokenProvider {
                 this.buildEntityForJwt(token)
         );
 
-
-//        UserDetails userDetails = this.userDetailsService.loadUserByUsername(
-//                getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails,
                 "",
                 userDetails.getAuthorities());
     }
+
+    //-------------------------------------------------------------------------------------
 
     public String getUsername(String token) {
         return Jwts.parserBuilder()
@@ -73,7 +71,14 @@ public class JwtTokenProvider {
                 .getSubject();
     }
 
-    //-------------------------------------------------------------------------------------
+    public List<String> getRoles(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secret)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("roles", List.class);
+    }
 
     public String getPassword(String token) {
         return Jwts.parserBuilder()
@@ -103,12 +108,13 @@ public class JwtTokenProvider {
     }
 
 
-    public UserLoginEntity buildEntityForJwt(String token) {
-        return UserLoginEntity.builder()
+    public LoginDTO buildEntityForJwt(String token) {
+        return LoginDTO.builder()
                 .id(getId(token))
                 .username(getUsername(token))
                 .password(getPassword(token))
                 .status(Status.valueOf(getStatus(token)))
+                .roles(getRoles(token))
                 .build();
     }
 
@@ -119,7 +125,7 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
         log.info("Token value: " + bearerToken);
-        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
@@ -158,14 +164,14 @@ public class JwtTokenProvider {
         }
     }
 
-    private List<String> getRoleNames(List<RoleEntity> userRoleEntities) {
-        List<String> result = new ArrayList<>();
-
-        userRoleEntities.forEach(role -> {
-            result.add(role.getName());
-        });
-
-        return result;
-    }
+//    private List<String> getRoleNames(List<RoleEntity> userRoleEntities) {
+//        List<String> result = new ArrayList<>();
+//
+//        userRoleEntities.forEach(role -> {
+//            result.add(role.getName());
+//        });
+//
+//        return result;
+//    }
 
 }

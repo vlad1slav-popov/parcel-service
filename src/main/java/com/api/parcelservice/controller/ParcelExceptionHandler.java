@@ -26,21 +26,21 @@ public class ParcelExceptionHandler extends ResponseEntityExceptionHandler {
                         .build());
     }
 
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-//                                                                  @Nonnull HttpHeaders headers,
-//                                                                  @Nonnull HttpStatus status,
-//                                                                  @Nonnull WebRequest request) {
-//
-//        return ResponseEntity.ok()
-//                .body(
-//                        ErrorResponse.builder()
-//                                .code(String.valueOf(status.value()))
-//                                .description(ex.getBindingResult().getFieldError().getField() + " " +
-//                                        ex.getBindingResult().getFieldError().getDefaultMessage())
-//                                .build());
-//
-//    }
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  @Nonnull HttpHeaders headers,
+                                                                  @Nonnull HttpStatus status,
+                                                                  @Nonnull WebRequest request) {
+
+        return ResponseEntity.ok()
+                .body(
+                        ErrorResponse.builder()
+                                .code(String.valueOf(status.value()))
+                                .description(ex.getBindingResult().getFieldError().getField() + " " +
+                                        ex.getBindingResult().getFieldError().getDefaultMessage())
+                                .build());
+
+    }
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(

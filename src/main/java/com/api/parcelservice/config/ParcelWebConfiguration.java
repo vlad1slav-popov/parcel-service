@@ -10,11 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class ParcelWebConfiguration {
 
     @Bean
-    Logger logger() {
-        return LogManager.getLogger("service_logger");
-    }
-
-    @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }

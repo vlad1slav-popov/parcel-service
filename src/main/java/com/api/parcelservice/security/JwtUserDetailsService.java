@@ -1,9 +1,7 @@
 package com.api.parcelservice.security;
 
 
-import com.api.parcelservice.entity.UserLoginEntity;
-import com.api.parcelservice.exception.UserNotFoundException;
-import com.api.parcelservice.repository.UserLoginRepository;
+import com.api.parcelservice.dto.LoginDTO;
 import com.api.parcelservice.security.jwt.JwtUser;
 import com.api.parcelservice.security.jwt.JwtUserFactory;
 import lombok.AllArgsConstructor;
@@ -13,15 +11,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 
 @Service
 @Slf4j
 @AllArgsConstructor
 public class JwtUserDetailsService implements UserDetailsService {
 
-    private final UserLoginRepository userLoginRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -35,7 +30,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         return null;
     }
 
-    public UserDetails loadUserByUserEntity(UserLoginEntity entity) {
+    public UserDetails loadUserByUserEntity(LoginDTO entity) {
         JwtUser jwtUser = JwtUserFactory.create(entity);
         return jwtUser;
     }
