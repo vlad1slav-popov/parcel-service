@@ -22,7 +22,7 @@ public class ParcelService {
     private final ParcelRepository parcelRepository;
 
 
-    public ParcelEntity createParcel(AddParcelRequest request)  {
+    public ParcelEntity createParcel(AddParcelRequest request) {
 
         ParcelEntity parcelEntity = new ParcelEntity();
         BeanUtils.copyProperties(request, parcelEntity);
@@ -74,11 +74,10 @@ public class ParcelService {
 
     public ParcelEntity getParcelOfUser(Long parcelId,
                                         Long userId) {
-        ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
+
+        return Optional.ofNullable(parcelRepository
                 .getParcelEntityByIdAndUserId(parcelId,
                         userId)).orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
-
-        return parcelInfo;
     }
 
     public List<ParcelEntity> getAllByUserId(Long userId) {
@@ -130,13 +129,12 @@ public class ParcelService {
     }
 
     public ParcelEntity getParcelInfoOfCour(Long parcelId,
-                                                            Long courId) {
-        ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
+                                            Long courId) {
+
+        return Optional.ofNullable(parcelRepository
                         .getParcelEntityByIdAndCourierId(parcelId,
                                 courId))
                 .orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
-
-        return parcelInfo;
 
     }
 
