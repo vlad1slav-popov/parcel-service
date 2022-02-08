@@ -27,9 +27,9 @@ public class ParcelController {
     public ResponseEntity<ParcelEntity> createParcel(@RequestBody @Valid AddParcelRequest addParcelRequest) {
 //        return parcelService.createParcel(request);
 
-        jmsTemplate.convertAndSend("requestqueue", addParcelRequest);
+        jmsTemplate.convertAndSend("parcel-create-req-queue", addParcelRequest);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-create-res-queue"));
 
     }
 
@@ -38,18 +38,18 @@ public class ParcelController {
     public ResponseEntity<ParcelEntity> updateParcelDest(@RequestBody @Valid UpdDestinationRequest updDestinationRequest) {
 //        return parcelService.updateParcelDestOfUser(request);
 
-        jmsTemplate.convertAndSend("requestqueue", updDestinationRequest);
+        jmsTemplate.convertAndSend("parcel-updatedest-req-queue", updDestinationRequest);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-updatedest-res-queue"));
     }
 
     @Secured("ROLE_USER")
     @PutMapping("cancel")
     public ResponseEntity<ParcelEntity> cancelParcel(@RequestBody @Valid CancelRequest cancelRequest) {
 
-        jmsTemplate.convertAndSend("requestqueue", cancelRequest);
+        jmsTemplate.convertAndSend("parcel-cancel-req-queue", cancelRequest);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-cancel-res-queue"));
 //        return parcelService.cancelParcel(request);
     }
 
@@ -63,9 +63,9 @@ public class ParcelController {
                 .build();
 
 
-        jmsTemplate.convertAndSend("requestqueue", idDTO);
+        jmsTemplate.convertAndSend("parcel-getparcelofuser-req-queue", idDTO);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-getparcelofuser-res-queue"));
 //        return parcelService.getParcelOfUser(id, userId);
     }
 
@@ -78,9 +78,9 @@ public class ParcelController {
                 .build();
 
 
-        jmsTemplate.convertAndSend("requestqueue", idDTO);
+        jmsTemplate.convertAndSend("parcel-getallbyuser-req-queue", idDTO);
         return ResponseEntity.ok((List<ParcelEntity>) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-getallbyuser-res-queue"));
     }
 
     @Secured("ROLE_ADMIN")
@@ -88,9 +88,9 @@ public class ParcelController {
     public ResponseEntity<List<ParcelEntity>> getAll() {
 
 
-        jmsTemplate.convertAndSend("requestqueue", "get all parcel");
+        jmsTemplate.convertAndSend("parcel-getall-req-queue", "get all parcel");
         return ResponseEntity.ok((List<ParcelEntity>) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-getall-res-queue"));
 
 //        return parcelService.getAll();
     }
@@ -99,9 +99,9 @@ public class ParcelController {
     @PutMapping("status/change")
     public ResponseEntity<ParcelEntity> changeStatus(@RequestBody @Valid ChangeParcelStatusRequest changeParcelStatusRequest) {
 
-        jmsTemplate.convertAndSend("requestqueue", changeParcelStatusRequest);
+        jmsTemplate.convertAndSend("parcel-changestatus-req-queue", changeParcelStatusRequest);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-changestatus-res-queue"));
 
 //        return parcelService.changeParcelStatus(request);
     }
@@ -110,9 +110,9 @@ public class ParcelController {
     @PutMapping("courier/assign")
     public ResponseEntity<ParcelEntity> assignToCourier(@RequestBody @Valid AssignToCourRequest assignToCourRequest) {
 
-        jmsTemplate.convertAndSend("requestqueue", assignToCourRequest);
+        jmsTemplate.convertAndSend("parcel-assigntocour-req-queue", assignToCourRequest);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-assigntocour-res-queue"));
     }
 
     @Secured("ROLE_COURIER")
@@ -123,9 +123,9 @@ public class ParcelController {
                 .build();
 
 
-        jmsTemplate.convertAndSend("requestqueue", idDTO);
+        jmsTemplate.convertAndSend("parcel-getallbycour-req-queue", idDTO);
         return ResponseEntity.ok((List<ParcelEntity>) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-getallbycour-res-queue"));
     }
 
     @Secured("ROLE_COURIER")
@@ -136,9 +136,9 @@ public class ParcelController {
                                                                                 changeCourParcelStatusRequest) {
 
 
-        jmsTemplate.convertAndSend("requestqueue", changeCourParcelStatusRequest);
+        jmsTemplate.convertAndSend("parcel-changeparcelstatusofcour-req-queue", changeCourParcelStatusRequest);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-changeparcelstatusofcour-res-queue"));
 
         //        return parcelService.changeParcelStatusOfCour(request);
     }
@@ -154,9 +154,9 @@ public class ParcelController {
                 .build();
 
 
-        jmsTemplate.convertAndSend("requestqueue", idDTO);
+        jmsTemplate.convertAndSend("parcel-getparcelofcour-req-queue", idDTO);
         return ResponseEntity.ok((ParcelEntity) jmsTemplate
-                .receiveAndConvert("responsequeue"));
+                .receiveAndConvert("parcel-getparcelofcour-res-queue"));
     }
 
 

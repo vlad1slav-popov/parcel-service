@@ -101,11 +101,10 @@ public class ParcelService {
         return parcelInfo;
     }
 
-    public ParcelEntity assingToCour(AssignToCourRequest request) {
+    public ParcelEntity assignToCour(AssignToCourRequest request) {
         ParcelEntity parcelInfo = Optional.ofNullable(parcelRepository
                         .getParcelEntityById(request.getId()))
                 .orElseThrow(() -> new ParcelException("PARCEL_NOT_FOUND", "001"));
-
 
         parcelInfo.setCourierId(request.getCourierId());
         parcelInfo.setStatus(Status.ACCEPTED);
